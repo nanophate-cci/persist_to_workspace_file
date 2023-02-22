@@ -26,6 +26,8 @@ jobs:
           else
             echo "Nope!"; exit 1
           fi
+      - run: echo "OUTPUT=$(cat echo-output)" >> "$BASH_ENV"
+      - run: echo $OUTPUT
 
 workflows:
   btd:
