@@ -1,0 +1,37 @@
+version: 2.1
+
+executors:
+  my-executor:
+    docker:
+      - image: cimg/base:stable
+
+jobs:
+  flow:
+    executor: my-executor
+    steps:
+      - run: echo "Hello, world!" > echo-output
+      - persist_to_workspace:
+          root: .
+          paths:
+            - echo-output
+
+  downstream:
+    executor: my-executor
+    steps:
+      - attach_workspace:
+          at: ./
+      - run: |
+          if [[ `cat echo-output` == "Hello, world!" ]]; then
+            echo "It worked!";
+          else
+            echo "Nope!"; exit 1
+          fi
+
+workflows:
+  btd:
+    jobs:
+      - flow
+      - downstream:
+          requires:
+            - flow
+
